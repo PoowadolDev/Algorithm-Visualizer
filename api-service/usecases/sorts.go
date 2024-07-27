@@ -33,5 +33,9 @@ func (s *AlgorithmService) SortProblem(data entities.SortData) ([]entities.Solve
 		return s.repo.Quick(data)
 	}
 
+	if data.SortType == "Bubble" {
+		return s.repo.Bubble(data)
+	}
+
 	return []entities.SolveData{}, errors.New("This is Error")
 }
