@@ -29,8 +29,8 @@ func (s *AlgorithmService) SortProblem(data entities.SortData) ([]entities.Solve
 		return s.repo.Merge(data)
 	}
 
-	if data.SortType == "Quick" {
-		return s.repo.Quick(data)
+	if data.SortType == "Insertion" {
+		return s.repo.Insertion(data)
 	}
 
 	if data.SortType == "Bubble" {

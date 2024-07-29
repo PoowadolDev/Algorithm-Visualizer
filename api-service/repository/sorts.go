@@ -9,7 +9,7 @@ import (
 type SortAlgorithmRepo interface {
 	Selection(dataList entities.SortData) ([]entities.SolveData, error)
 	Merge(dataList entities.SortData) ([]entities.SolveData, error)
-	Quick(dataList entities.SortData) ([]entities.SolveData, error)
+	Insertion(dataList entities.SortData) ([]entities.SolveData, error)
 	Bubble(dataList entities.SortData) ([]entities.SolveData, error)
 }
 
@@ -21,57 +21,69 @@ func NewAlgorithmRepo(solveData entities.SortData) SortAlgorithmRepo {
 	return &AlgorithmRepo{solveData: solveData}
 }
 
+func InitData(startData entities.SortData) ([]int, []entities.SolveData) {
+	stepResult := []entities.SolveData{}
+	dataArray := startData.DataList
+	return dataArray, stepResult
+}
+
 func (r *AlgorithmRepo) Selection(data entities.SortData) ([]entities.SolveData, error) {
 	fmt.Println("Selection")
-	resultSolve := []entities.SolveData{}
-	dataArray := data.DataList
-	for i := 0; i < len(dataArray); i++ {
+
+	dataArray, stepResult := InitData(data)
+	dataArray, stepResult = processSelectionSort(dataArray, stepResult)
+
+	addStepData(&stepResult, dataArray, "Result")
+
+	return stepResult, nil
+}
+
+func processSelectionSort(array []int, stepResult []entities.SolveData) ([]int, []entities.SolveData) {
+	for i := 0; i < len(array); i++ {
 		min := i
-		for j := i + 1; j < len(dataArray); j++ {
-			if dataArray[min] > dataArray[j] {
+		for j := i + 1; j < len(array); j++ {
+			if array[min] > array[j] {
 				min = j
 			}
 
 		}
-		temp := dataArray[min]
-		fmt.Printf("Switch : %d with %d \n", temp, dataArray[i])
-		result := []int{temp, dataArray[i]}
-		dataArray[min] = dataArray[i]
-		dataArray[i] = temp
+		temp := array[min]
+		fmt.Printf("Switch : %d with %d \n", temp, array[i])
+		result := []int{temp, array[i]}
+		array[min] = array[i]
+		array[i] = temp
 
-		resultSolve = addStepData(resultSolve, result, fmt.Sprint(i+1))
+		addStepData(&stepResult, result, fmt.Sprint(i+1))
 	}
 
-	resultSolve = addStepData(resultSolve, dataArray, "Result")
-
-	return resultSolve, nil
+	return array, stepResult
 }
 
 func (r *AlgorithmRepo) Merge(data entities.SortData) ([]entities.SolveData, error) {
 	fmt.Println("Merge")
-	stepResult := []entities.SolveData{}
+	dataArray, stepResult := InitData(data)
 
-	result := mergeSort(data.DataList, stepResult)
-	stepResult = addStepData(stepResult, result, "Result")
+	result, stepResult := processMergeSort(dataArray, stepResult)
+	addStepData(&stepResult, result, "Result")
 	return stepResult, nil
 }
 
-func mergeSort(array []int, stepResult []entities.SolveData) []int {
+func processMergeSort(array []int, stepResult []entities.SolveData) ([]int, []entities.SolveData) {
 	length := len(array)
 	if length <= 1 {
-		return array
+		return array, stepResult
 	}
 
 	mid := length / 2
-	left := mergeSort(array[:mid], stepResult)
-	right := mergeSort(array[mid:], stepResult)
+	left, stepResult := processMergeSort(array[:mid], stepResult)
+	right, stepResult := processMergeSort(array[mid:], stepResult)
 
 	// fmt.Printf("Result of Merge Right: %d \n", right)
 
 	return merge(left, right, stepResult)
 }
 
-func merge(left, right []int, stepResult []entities.SolveData) []int {
+func merge(left, right []int, stepResult []entities.SolveData) ([]int, []entities.SolveData) {
 	merged := make([]int, 0, len(left)+len(right))
 	i, j := 0, 0
 
@@ -79,13 +91,13 @@ func merge(left, right []int, stepResult []entities.SolveData) []int {
 		if left[i] < right[j] {
 			fmt.Printf("Switch: %d with %d \n", left[i], right[j])
 			result := []int{left[i], right[j]}
-			stepResult = addStepData(stepResult, result, "Left")
+			addStepData(&stepResult, result, "Left")
 			merged = append(merged, left[i])
 			i++
 		} else {
 			fmt.Printf("Switch: %d with %d \n", right[j], left[i])
 			result := []int{right[j], left[i]}
-			stepResult = addStepData(stepResult, result, "Right")
+			addStepData(&stepResult, result, "Right")
 			merged = append(merged, right[j])
 			j++
 		}
@@ -94,38 +106,64 @@ func merge(left, right []int, stepResult []entities.SolveData) []int {
 	merged = append(merged, left[i:]...)
 	merged = append(merged, right[j:]...)
 
-	return merged
+	return merged, stepResult
 }
 
-func (r *AlgorithmRepo) Quick(data entities.SortData) ([]entities.SolveData, error) {
-	fmt.Println("Quick")
-	return []entities.SolveData{}, nil
+func (r *AlgorithmRepo) Insertion(data entities.SortData) ([]entities.SolveData, error) {
+	dataArray, stepResult := InitData(data)
+	dataArray, stepResult = processInsertionSort(dataArray, stepResult)
+
+	addStepData(&stepResult, dataArray, "Result")
+
+	return stepResult, nil
+}
+
+func processInsertionSort(array []int, stepResult []entities.SolveData) ([]int, []entities.SolveData) {
+	for i, v := range array {
+		j := i - 1
+		if i >= 1 {
+			for j >= 0 && array[j] > v {
+				result := []int{array[j+1], array[j]}
+				addStepData(&stepResult, result, fmt.Sprint(i+1))
+				array[j+1] = array[j]
+				j--
+			}
+			array[j+1] = v
+		}
+	}
+
+	return array, stepResult
 }
 
 func (r *AlgorithmRepo) Bubble(data entities.SortData) ([]entities.SolveData, error) {
-	resultSolve := []entities.SolveData{}
+	stepResult := []entities.SolveData{}
 	dataArray := data.DataList
-	for i := 0; i < len(dataArray)-1; i++ {
-		for j := i + 1; j < len(dataArray); j++ {
-			if dataArray[i] > dataArray[j] {
-				result := []int{dataArray[i], dataArray[j]}
-				resultSolve = addStepData(resultSolve, result, fmt.Sprint(i+1))
-				dataArray[i], dataArray[j] = dataArray[j], dataArray[i]
-			}
-		}
 
-		fmt.Printf("Step: %d Result: %d \n", i+1, dataArray)
-	}
+	dataArray, stepResult = processBubbleSort(dataArray, stepResult)
 
-	resultSolve = addStepData(resultSolve, dataArray, "Result")
+	addStepData(&stepResult, dataArray, "Result")
 
-	return resultSolve, nil
+	return stepResult, nil
 }
 
-func addStepData(array []entities.SolveData, result []int, state string) []entities.SolveData {
-	array = append(array, entities.SolveData{
+func processBubbleSort(array []int, stepResult []entities.SolveData) ([]int, []entities.SolveData) {
+	for i := 0; i < len(array)-1; i++ {
+		for j := i + 1; j < len(array); j++ {
+			if array[i] > array[j] {
+				result := []int{array[i], array[j]}
+				addStepData(&stepResult, result, fmt.Sprint(i+1))
+				array[i], array[j] = array[j], array[i]
+			}
+		}
+	}
+
+	return array, stepResult
+}
+
+func addStepData(array *[]entities.SolveData, result []int, state string) {
+	newStepData := entities.SolveData{
 		Step:     state,
 		DataList: result,
-	})
-	return array
+	}
+	*array = append(*array, newStepData)
 }
