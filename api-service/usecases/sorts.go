@@ -9,6 +9,7 @@ import (
 
 type AlgorithmUseCase interface {
 	SortProblem(dataList entities.SortData) ([]entities.SolveData, error)
+	GenerateData(size int) ([]int, error)
 }
 
 type AlgorithmService struct {
@@ -38,4 +39,11 @@ func (s *AlgorithmService) SortProblem(data entities.SortData) ([]entities.Solve
 	}
 
 	return []entities.SolveData{}, errors.New("This is Error")
+}
+
+func (s *AlgorithmService) GenerateData(size int) ([]int, error) {
+	if size <= 0 {
+		return []int{}, errors.New("Size must be greater than 0")
+	}
+	return s.repo.GenerateData(size)
 }

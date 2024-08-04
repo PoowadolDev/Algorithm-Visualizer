@@ -2,6 +2,7 @@ package repository
 
 import (
 	"fmt"
+	"math/rand"
 
 	"github.com/PoowadolDev/Algorithm-Visualizer/entities"
 )
@@ -11,6 +12,7 @@ type SortAlgorithmRepo interface {
 	Merge(dataList entities.SortData) ([]entities.SolveData, error)
 	Insertion(dataList entities.SortData) ([]entities.SolveData, error)
 	Bubble(dataList entities.SortData) ([]entities.SolveData, error)
+	GenerateData(size int) ([]int, error)
 }
 
 type AlgorithmRepo struct {
@@ -19,6 +21,18 @@ type AlgorithmRepo struct {
 
 func NewAlgorithmRepo(solveData entities.SortData) SortAlgorithmRepo {
 	return &AlgorithmRepo{solveData: solveData}
+}
+
+func (r *AlgorithmRepo) GenerateData(size int) ([]int, error) {
+	// Create an array of the specified size
+	randomArray := make([]int, size)
+
+	// Populate the array with random integers
+	for i := 0; i < size; i++ {
+		randomArray[i] = rand.Intn(100) // Random integer between 0 and 99
+	}
+
+	return randomArray, nil
 }
 
 func InitData(startData entities.SortData) ([]int, []entities.SolveData) {
