@@ -18,6 +18,6 @@ func main() {
 	app.Get("/sortProblem", sortHandler.SolveSortProblem)
 	app.Get("/generateData", sortHandler.GenerateData)
 
-	app.Listen(":3000")
+	app.Listen(":4000")
 
 }
