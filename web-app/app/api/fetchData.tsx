@@ -16,4 +16,13 @@ async function fetchGetData(path: string) {
 })
 }
 
-export { fetchGetData }
+async function fetchPostData(path: string, data: any) {
+    console.log(`POST : ${endpoint}/${path}`)
+    return axios.post(`${endpoint}/${path}`, data
+        ).then((response) => {
+            console.log(response.data)
+            return response
+    })
+}
+
+export { fetchGetData, fetchPostData }
