@@ -47,7 +47,7 @@ func (r *AlgorithmRepo) Selection(data entities.SortData) ([]entities.SolveData,
 	dataArray, stepResult := InitData(data)
 	dataArray, stepResult = processSelectionSort(dataArray, stepResult)
 
-	addStepData(&stepResult, dataArray, "Result")
+	// addStepData(&stepResult, dataArray, dataArray, "Result")
 
 	return stepResult, nil
 }
@@ -63,11 +63,13 @@ func processSelectionSort(array []int, stepResult []entities.SolveData) ([]int, 
 		}
 		temp := array[min]
 		fmt.Printf("Switch : %d with %d \n", temp, array[i])
-		result := []int{temp, array[i]}
+		dataSwitch := []int{temp, array[i]}
 		array[min] = array[i]
 		array[i] = temp
 
-		addStepData(&stepResult, result, fmt.Sprint(i+1))
+		currentArray := make([]int, len(array))
+		copy(currentArray, array)
+		addStepData(&stepResult, dataSwitch, currentArray, fmt.Sprint(i+1))
 	}
 
 	return array, stepResult
@@ -78,7 +80,8 @@ func (r *AlgorithmRepo) Merge(data entities.SortData) ([]entities.SolveData, err
 	dataArray, stepResult := InitData(data)
 
 	result, stepResult := processMergeSort(dataArray, stepResult)
-	addStepData(&stepResult, result, "Result")
+	fmt.Println("Result of Merge: ", result)
+	// addStepData(&stepResult, result, result, "Result")
 	return stepResult, nil
 }
 
@@ -104,15 +107,21 @@ func merge(left, right []int, stepResult []entities.SolveData) ([]int, []entitie
 	for i < len(left) && j < len(right) {
 		if left[i] < right[j] {
 			fmt.Printf("Switch: %d with %d \n", left[i], right[j])
-			result := []int{left[i], right[j]}
-			addStepData(&stepResult, result, "Left")
+			dataSwitch := []int{left[i], right[j]}
 			merged = append(merged, left[i])
+
+			currentArray := make([]int, len(merged))
+			copy(currentArray, merged)
+			addStepData(&stepResult, dataSwitch, currentArray, "Left")
 			i++
 		} else {
 			fmt.Printf("Switch: %d with %d \n", right[j], left[i])
-			result := []int{right[j], left[i]}
-			addStepData(&stepResult, result, "Right")
+			dataSwitch := []int{right[j], left[i]}
 			merged = append(merged, right[j])
+
+			currentArray := make([]int, len(merged))
+			copy(currentArray, merged)
+			addStepData(&stepResult, dataSwitch, merged, "Right")
 			j++
 		}
 	}
@@ -127,7 +136,7 @@ func (r *AlgorithmRepo) Insertion(data entities.SortData) ([]entities.SolveData,
 	dataArray, stepResult := InitData(data)
 	dataArray, stepResult = processInsertionSort(dataArray, stepResult)
 
-	addStepData(&stepResult, dataArray, "Result")
+	addStepData(&stepResult, dataArray, dataArray, "Result")
 
 	return stepResult, nil
 }
@@ -138,8 +147,8 @@ func processInsertionSort(array []int, stepResult []entities.SolveData) ([]int, 
 		if i >= 1 {
 			for j >= 0 && array[j] > v {
 				result := []int{array[j+1], array[j]}
-				addStepData(&stepResult, result, fmt.Sprint(i+1))
 				array[j+1] = array[j]
+				addStepData(&stepResult, result, array, fmt.Sprint(i+1))
 				j--
 			}
 			array[j+1] = v
@@ -155,7 +164,7 @@ func (r *AlgorithmRepo) Bubble(data entities.SortData) ([]entities.SolveData, er
 
 	dataArray, stepResult = processBubbleSort(dataArray, stepResult)
 
-	addStepData(&stepResult, dataArray, "Result")
+	addStepData(&stepResult, dataArray, dataArray, "Result")
 
 	return stepResult, nil
 }
@@ -165,8 +174,8 @@ func processBubbleSort(array []int, stepResult []entities.SolveData) ([]int, []e
 		for j := i + 1; j < len(array); j++ {
 			if array[i] > array[j] {
 				result := []int{array[i], array[j]}
-				addStepData(&stepResult, result, fmt.Sprint(i+1))
 				array[i], array[j] = array[j], array[i]
+				addStepData(&stepResult, result, array, fmt.Sprint(i+1))
 			}
 		}
 	}
@@ -174,10 +183,11 @@ func processBubbleSort(array []int, stepResult []entities.SolveData) ([]int, []e
 	return array, stepResult
 }
 
-func addStepData(array *[]entities.SolveData, result []int, state string) {
+func addStepData(array *[]entities.SolveData, dataSwitch []int, result []int, state string) {
 	newStepData := entities.SolveData{
-		Step:     state,
-		DataList: result,
+		Step:       state,
+		DataSwitch: dataSwitch,
+		DataList:   result,
 	}
 	*array = append(*array, newStepData)
 }

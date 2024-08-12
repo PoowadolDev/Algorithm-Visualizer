@@ -6,6 +6,7 @@ type SortData struct {
 }
 
 type SolveData struct {
-	Step     string `json:step`
-	DataList []int  `json:dataList`
+	Step       string `json:step`
+	DataSwitch []int  `json:dataList`
+	DataList   []int  `json:dataList`
 }
