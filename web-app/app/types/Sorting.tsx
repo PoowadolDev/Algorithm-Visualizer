@@ -3,6 +3,7 @@ interface GenerateData {
 }
 
 interface SolveData {
-    solveData(data: number[]): number[]
-    stepResult: number[]
+    DataList: number[]
+    DataSwitch: number[]
+    Step: string
 }
