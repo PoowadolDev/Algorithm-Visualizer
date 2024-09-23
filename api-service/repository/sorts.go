@@ -79,55 +79,55 @@ func (r *AlgorithmRepo) Merge(data entities.SortData) ([]entities.SolveData, err
 	fmt.Println("Merge")
 	dataArray, stepResult := InitData(data)
 
-	result, stepResult := processMergeSort(dataArray, stepResult)
+	result, stepResult := processMergeSort(dataArray, stepResult, dataArray)
 	fmt.Println("Result of Merge: ", result)
 	// addStepData(&stepResult, result, result, "Result")
 	return stepResult, nil
 }
 
-func processMergeSort(array []int, stepResult []entities.SolveData) ([]int, []entities.SolveData) {
+func processMergeSort(array []int, stepResult []entities.SolveData, fullArray []int) ([]int, []entities.SolveData) {
 	length := len(array)
 	if length <= 1 {
 		return array, stepResult
 	}
 
 	mid := length / 2
-	left, stepResult := processMergeSort(array[:mid], stepResult)
-	right, stepResult := processMergeSort(array[mid:], stepResult)
+	left, stepResult := processMergeSort(array[:mid], stepResult, fullArray)
+	right, stepResult := processMergeSort(array[mid:], stepResult, fullArray)
 
 	// fmt.Printf("Result of Merge Right: %d \n", right)
 
-	return merge(left, right, stepResult)
+	return merge(left, right, stepResult, fullArray)
 }
 
-func merge(left, right []int, stepResult []entities.SolveData) ([]int, []entities.SolveData) {
+func merge(left, right []int, stepResult []entities.SolveData, fullArray []int) ([]int, []entities.SolveData) {
 	merged := make([]int, 0, len(left)+len(right))
 	i, j := 0, 0
 
 	for i < len(left) && j < len(right) {
 		if left[i] < right[j] {
 			fmt.Printf("Switch: %d with %d \n", left[i], right[j])
-			dataSwitch := []int{left[i], right[j]}
 			merged = append(merged, left[i])
-
-			currentArray := make([]int, len(merged))
-			copy(currentArray, merged)
-			addStepData(&stepResult, dataSwitch, currentArray, "Left")
 			i++
 		} else {
 			fmt.Printf("Switch: %d with %d \n", right[j], left[i])
-			dataSwitch := []int{right[j], left[i]}
 			merged = append(merged, right[j])
-
-			currentArray := make([]int, len(merged))
-			copy(currentArray, merged)
-			addStepData(&stepResult, dataSwitch, merged, "Right")
 			j++
 		}
 	}
 
 	merged = append(merged, left[i:]...)
 	merged = append(merged, right[j:]...)
+
+	fullMergedArray := make([]int, len(fullArray))
+	copy(fullMergedArray, fullArray)
+
+	position := len(fullArray) - len(merged)
+	for k := 0; k < len(merged); k++ {
+		fullMergedArray[position+k] = merged[k]
+	}
+
+	addStepData(&stepResult, merged, fullMergedArray, "Merge")
 
 	return merged, stepResult
 }
@@ -148,7 +148,9 @@ func processInsertionSort(array []int, stepResult []entities.SolveData) ([]int, 
 			for j >= 0 && array[j] > v {
 				result := []int{array[j+1], array[j]}
 				array[j+1] = array[j]
-				addStepData(&stepResult, result, array, fmt.Sprint(i+1))
+				currentArray := make([]int, len(array))
+				copy(currentArray, array)
+				addStepData(&stepResult, result, currentArray, fmt.Sprint(i+1))
 				j--
 			}
 			array[j+1] = v
@@ -175,7 +177,9 @@ func processBubbleSort(array []int, stepResult []entities.SolveData) ([]int, []e
 			if array[i] > array[j] {
 				result := []int{array[i], array[j]}
 				array[i], array[j] = array[j], array[i]
-				addStepData(&stepResult, result, array, fmt.Sprint(i+1))
+				currentArray := make([]int, len(array))
+				copy(currentArray, array)
+				addStepData(&stepResult, result, currentArray, fmt.Sprint(i+1))
 			}
 		}
 	}

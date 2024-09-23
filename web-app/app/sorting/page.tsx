@@ -16,7 +16,7 @@ export default function Page() {
     const [genData, setGenData] = useState<number[]>([]);
     const [solveData, setSolveData] = useState<SolveData[]>([]);
     const [sortAlgorithm, setSortAlgorithm] = useState<string>("Selection");
-
+    const [DisplayAlert, setDisplayAlert] = useState<string>("none");
 
     const fetchGen = async () => {
         const response = await fetchGetData(`generateData?size=${size}`)
@@ -45,6 +45,8 @@ export default function Page() {
             setGenData(item.DataList)
             await delay(1000);
         }
+        setDisplayAlert("");
+        setTimeout(() => setDisplayAlert("none"), 5000);
     }
 
     useEffect(() => {
@@ -88,6 +90,20 @@ export default function Page() {
                     fetchSolve()
                 }} className="font-normal text-xl ms-10 p-2 rounded hover:bg-slate-600">Solve</button>
             </form>
+        </div>
+        <div role="alert" className="alert alert-success" style={{display: DisplayAlert}}>
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6 shrink-0 stroke-current"
+                    fill="none"
+                    viewBox="0 0 24 24">
+                    <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>Sort Completed!</span>
         </div>
         <div className="flex justify-center items-center h-96">
             <div className="h-full w-9/12">
