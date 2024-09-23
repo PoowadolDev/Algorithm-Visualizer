@@ -54,13 +54,6 @@ The Algorithm-Visualizer project is a web-based application that provides an int
 }
 ```
 
-## Contributing
-
-Contributions are welcome! If you'd like to contribute to the project, please fork the repository and submit a pull request.
-
-## License
-
-The Algorithm-Visualizer project is licensed under the MIT License.
 
 ## Acknowledgments
 
