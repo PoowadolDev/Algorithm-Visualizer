@@ -20,7 +20,7 @@ The Algorithm-Visualizer project is a web-based application that provides an int
 1. Clone the repository: `git clone https://github.com/PoowadolDev/Algorithm-Visualizer.git`
 2. Navigate to the api-service directory: `cd api-service`
 3. Run the API service: `go run main.go`
-4. API Service is running on port 4000
+4. API Service is running on port `4000`
 
 ### Frontend Web App
 
@@ -28,7 +28,7 @@ The Algorithm-Visualizer project is a web-based application that provides an int
 2. Navigate to the web-app directory: `cd web-app`
 3. Install dependencies: `npm install` or `yarn install`
 4. Run the web app: `npm run dev` or `yarn dev`
-5. Web Service is running on port 3000
+5. Web Service is running on port `3000`
 
 ## API Documentation
 
